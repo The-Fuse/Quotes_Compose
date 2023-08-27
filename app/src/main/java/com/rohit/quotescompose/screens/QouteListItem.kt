@@ -3,6 +3,7 @@ package com.rohit.quotescompose.screens
 import  android.provider.CalendarContract.Colors
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,15 +38,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rohit.quotescompose.R
+import com.rohit.quotescompose.models.Qoutes
 
-@Preview(showBackground = true)
 @Composable
-fun QouteListItem() {
+fun QouteListItem(qoute: Qoutes, onClick : (qoute: Qoutes)-> Unit) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(4.dp),
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier
+            .clickable { onClick(qoute) }
+            .padding(8.dp)
+
     ) {
         Row(
             modifier = Modifier.padding(16.dp)
@@ -61,7 +65,8 @@ fun QouteListItem() {
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "Genius is one percent inspiration and ninety-nine percent perspiration",
+                    text = qoute.text,
+                    fontFamily = FontFamily(Font(R.font.montserrat_regular)),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(0.dp,0.dp,0.dp,8.dp)
                 )
@@ -72,7 +77,8 @@ fun QouteListItem() {
                         .height(1.dp)
                 )
                 Text(
-                    text = "Thomas Edison",
+                    text = qoute.author?: "Author Not Available",
+                    fontFamily = FontFamily(Font(R.font.montserrat_regular)),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Thin,
                     modifier = Modifier.padding(top = 4.dp),
@@ -83,51 +89,3 @@ fun QouteListItem() {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun QouteDetails() {
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize(1f)
-            .background(
-                Brush.sweepGradient(
-                    colors = listOf(
-                        Color(0xFFffffff),
-                        Color(0xFFE3E3E3)
-                    )
-                )
-            )
-    ) {
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            modifier = Modifier.padding(32.dp),
-            shape = RoundedCornerShape(4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .padding(16.dp,24.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.coma),
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp)
-                )
-                Text(
-                    text = "This is the most valuable thing a man can spend.",
-                    fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Theophrastus",
-                    fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                    style = MaterialTheme.typography.titleSmall
-                )
-            }
-        }
-    }
-}

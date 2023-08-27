@@ -3,7 +3,9 @@ package com.rohit.quotescompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -15,40 +17,58 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rohit.quotescompose.models.Qoutes
+import com.rohit.quotescompose.screens.QouteDetails
 import com.rohit.quotescompose.screens.QouteListItem
+import com.rohit.quotescompose.screens.QouteListScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
 
+        CoroutineScope(Dispatchers.IO).launch {
+            DataManager.loadAsset(applicationContext)
+        }
+
+        setContent {
+            app()
         }
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
-fun preview() {
+fun app() {
+    if (DataManager.isDataLoaded.value){
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Quotes App",
-            style = MaterialTheme.typography.headlineLarge,
-            fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-            modifier = Modifier.padding(14.dp)
+        if(DataManager.currentPage.value == Pages.LISTING){
+            QouteListScreen(data = DataManager.data){
+                DataManager.switchPages(it)
+            }
+        }else{
+            DataManager.currentQoute?.let { QouteDetails(qoute = it) }
+        }
 
-        )
-
-        QouteListItem()
-        QouteListItem()
-        QouteListItem()
-        QouteListItem()
-        QouteListItem()
-        QouteListItem()
-        QouteListItem()
-        QouteListItem()
-        QouteListItem()
     }
+    else{
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize(1f)
+        ){
+            Text(
+                text = "Loading....",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+        }
+    }
+}
+
+enum class Pages {
+    LISTING,
+    DETAIL
 }
